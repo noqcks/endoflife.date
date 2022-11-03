@@ -14,6 +14,46 @@ servers:
   - url: 'https://endoflife.date'
     description: Production API
 paths:
+  '/api/{purl}.json':
+    get:
+      # TODO: this should also match repology PURLs
+      summary: Get EoL dates of all cycles of a given product if found by purl.
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/cycle'
+              examples:
+                /api/ubuntu.json:
+                  value:
+                    - cycle: '21.04'
+                      lts: false
+                      releaseDate: '2021-04-22'
+                      support: '2022-01-01'
+                      eol: '2022-01-01'
+                      latest: '21.04'
+                      link: 'https://wiki.ubuntu.com/HirsuteHippo/ReleaseNotes/'
+                    - cycle: '20.10'
+                      lts: false
+                      releaseDate: '2020-10-22'
+                      support: '2021-07-07'
+                      eol: '2021-07-07'
+                      latest: '20.10'
+                      link: 'https://wiki.ubuntu.com/GroovyGorilla/ReleaseNotes/'
+      operationId: 'get-api-:purl-:product.json'
+      description: Get EoL dates of all cycles of a given product if found by purl.
+      parameters:
+        - schema:
+            type: string
+          name: purl
+          in: path
+          required: true
+          description: The purl for a given product.
   '/api/{product}.json':
     get:
       summary: Get All Details

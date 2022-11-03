@@ -1,0 +1,29 @@
+// generate pkgs
+
+types:
+- brew
+- github
+- docker
+- pypi
+- rpm
+- deb
+
+namespaces:
+  brew -> None
+  pypi -> None
+
+  rpm ->
+    amzn
+    redhat
+    centos
+
+  deb ->
+    ubuntu
+    debian
+
+  github -> cannot be generated, always custom
+
+  docker -> cannot be generated, always custom
+
+
+

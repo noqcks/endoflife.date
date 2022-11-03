@@ -39,6 +39,27 @@ class Product
       { 'name' => name, 'data' => release }
     end
   end
+
+  def purls
+    prls = []
+    if !hash.key?('purls')
+      return prls
+    end
+
+    hash.fetch('purls').map do |purl|
+      # check if purl key exists
+      if purl.key?('purl')
+        prl = purl.delete('purl')
+        # replace colons with underscore
+        prl = prl.gsub(':', '_')
+        # replace slashes with dashes
+        prl = prl.gsub(/[^0-9A-Za-z]/, '-')
+        prls.push(prl)
+      end
+      # TODO: generate all repology purls
+    end
+    prls
+  end
 end
 
 # return a json output filename, including the directory name. Any / characters
@@ -46,6 +67,9 @@ end
 def json_filename(output_dir, name)
   filename = name.to_s.tr('/', '-') + '.json'
   File.join(output_dir, filename)
+end
+
+def get_purls_from_repology(repology_name)
 end
 
 def process_product(product)
@@ -58,6 +82,13 @@ def process_product(product)
     File.open(output_file, 'w') { |f| f.puts cycle.fetch('data').to_json }
     all_cycles.append({'cycle' => cycle.fetch('name')}.merge(cycle.fetch('data')))
   end
+
+  product.purls.each do |purl|
+    output_file = json_filename(API_DIR, purl)
+    purl_info = {'product' => product.permalink, 'cycles' => all_cycles }
+    File.open(output_file, 'w') { |f| f.puts purl_info.to_json }
+  end
+
   output_file = json_filename(API_DIR, product.permalink)
   File.open(output_file, 'w') { |f| f.puts all_cycles.to_json }
 end
